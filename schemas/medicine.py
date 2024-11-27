@@ -1,15 +1,17 @@
-class MedicineSchema:
-    """Схема для лікарського засобу."""
+from pydantic import BaseModel
 
-    def __init__(self, medicine):
-        self.id = medicine.id
-        self.name = medicine.name
-        self.description = medicine.description
 
-    def to_dict(self):
-        """Перетворити об'єкт у словник."""
-        return {
-            "id": self.id,
-            "name": self.name,
-            "description": self.description
-        }
+class MedicineBase(BaseModel):
+    name: str
+    description: str
+
+    class Config:
+        from_attributes = True
+
+
+class CreateMedicineDTO(MedicineBase):
+    pass
+
+
+class MedicineDTO(MedicineBase):
+    id: int

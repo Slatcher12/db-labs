@@ -1,24 +1,21 @@
-from flask import Flask
-from controllers.medicine import medicine_blueprint
-from controllers.category import category_blueprint
-from controllers.manufacturer import manufacturer_blueprint
-from config.app import init_db
+import yaml
 
-# Створення Flask-додатка
-app = Flask(__name__)
 
-# Ініціалізація бази даних
-init_db()
+class Config:
+    def __init__(self, config_file='config/app.yml'):
+        with open(config_file, 'r') as file:
+            config_data = yaml.safe_load(file)
 
-# Реєстрація маршрутів (blueprints)
-app.register_blueprint(medicine_blueprint, url_prefix='/api/medicines')
-app.register_blueprint(category_blueprint, url_prefix='/api/categories')
-app.register_blueprint(manufacturer_blueprint, url_prefix='/api/manufacturers')
+        db_config = config_data.get('db', {})
+        self.DB_HOST = db_config.get('host')
+        self.DB_PORT = db_config.get('port')
+        self.DB_USER = db_config.get('user')
+        self.DB_PASSWORD = db_config.get('password')
+        self.DB_NAME = db_config.get('database')
 
-# Головний маршрут
-@app.route('/')
-def index():
-    return {"message": "Welcome to the Flask API for managing medicines!"}, 200
+    def get_db_uri(self) -> str:
+        return f"mysql+pymysql://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
-if __name__ == '__main__':
-    app.run(debug=True)
+
+
+config = Config()

@@ -3,4 +3,4 @@ db:
   port: "3306"
   user: "root"
   password: "vbrjkfms05"
-  database: "new_lab_3"
+  database: "mydb"
